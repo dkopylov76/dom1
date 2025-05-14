@@ -62,4 +62,29 @@
       </div>
     </div>
   </body>
+  <script>
+    "use strict";
+    // Код писать здесь
+    console.log("It works!");
+    let currentDate = new Date();
+    const options = {
+        day: 'numeric', month: 'numeric', year: '2-digit', hour: 'numeric', minute: 'numeric'
+    }
+    const commentsEl = document.querySelector('.comments');
+    const nameNew = document.querySelector('.add-form-name');
+    nameNew.addEventListener('input', (event) => {
+        console.log(event.target.value);
+    })
+    const commentNew = document.querySelector('.add-form-text');
+    commentNew.addEventListener('input', (event) => {
+        console.log(event.target.value);
+    })
+    const button = document.querySelector('.add-form-button');
+    button.addEventListener('click', () => {
+        const liElement = document.createElement("li");
+        commentsEl.appendChild(liElement);
+        liElement.classList.add('comment');
+        liElement.innerHTML = `<div class="comment-header"><div>${nameNew.value}</div><div>${currentDate.toLocaleDateString('ru-RU', options)}</div></div><div class="comment-body"><div class="comment-text">${commentNew.value}</div></div><div class="comment-footer"><div class="likes"><span class="likes-counter">0</span><button class="like-button -active-like"></button></div></div>`
+    })
+  </script>
 </html>
