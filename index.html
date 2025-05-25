@@ -8,40 +8,6 @@
   <body>
     <div class="container">
       <ul class="comments">
-        <!-- <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li> -->
       </ul>
       <div class="add-form">
         <input
@@ -66,8 +32,13 @@
   <script>
     "use strict";
     // Код писать здесь
-    console.log("It works!");
 
+    const name = document.getElementById("name-input");
+    const text = document.getElementById("text-input");
+
+    const sanitizeHtml = (value) => {
+      return value.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+    }
     
     const comments = [
       {
@@ -114,27 +85,36 @@
       const likeButtons = document.querySelectorAll(".like-button");
 
       for (const likeButton of likeButtons) {
-        likeButton.addEventListener("click", () => {
-          
+        likeButton.addEventListener("click", (event) => {
+          event.stopPropagation();
           const index = likeButton.dataset.index;
           const comment = comments[index];
 
           comment.likes = comment.isLiked ? comment.likes - 1 : comment.likes + 1;
-
           comment.isLiked = !comment.isLiked;
-
           renderComments();
         });
+      }
+
+      const commentsElements = document.querySelectorAll(".comment");
+
+      for (const commentElement of commentsElements) {
+        commentElement.addEventListener("click", () => {
+          const currentComment = comments[commentElement.dataset.index];
+          text.value = `${currentComment.name} > ${currentComment.text}`;
+        })
       }
     };
 
     renderComments();
-    
+
     const addButton = document.querySelector('.add-form-button');
-    const name = document.getElementById("name-input");
-    const text = document.getElementById("text-input");
 
     addButton.addEventListener('click', () => {
+      if (!name.value || !text.value) {
+        console.error("заполните форму");
+        return;
+      }
 
       let currentDate = new Date();
         const options = {
@@ -142,15 +122,14 @@
         }
 
       const newComment = {
-        name: name.value,
+        name: sanitizeHtml(name.value),
         date: currentDate.toLocaleDateString('ru-RU', options),
-        text: text.value,
+        text: sanitizeHtml(text.value),
         likes: 0,
         isLiked: false
       };
 
       comments.push(newComment);
-      // currentDate = "";
       renderComments();
 
       name.value = "";
